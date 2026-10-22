@@ -1,0 +1,19 @@
+{"protocol":"s7",
+
+  "adapter":{"id": 3, "name": "s7 1518TF", "enabled": true },
+  "connection": { "ip": "192.168.10.22", "rack": 0, "slot": 1 },
+  "polling" :{ "intervalMs": 1000 },
+  "reconnect": { "initialDelayMs": 2000, "maxDelayMs": 30000, "factor": 2 },
+
+  "read": [
+
+{ "mode": "multi", 
+  "tags": [
+    { "id": 0, "name": "s0", "target": "db", "number": 1, "offset": 0, "dataType": "STRING","length":128 },
+    { "id": 1, "name": "s1", "target": "db", "number": 1, "offset": 0, "dataType": "STRING","length":128 },
+    { "id": 2, "name": "s2", "target": "db", "number": 1, "offset": 0, "dataType": "STRING","length":128 },
+    { "id": 3, "name": "s3", "target": "db", "number": 1, "offset": 4, "dataType": "STRING","length":58 }
+    ]
+  }
+]
+}

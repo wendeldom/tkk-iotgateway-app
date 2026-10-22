@@ -1,0 +1,9 @@
+build/
+compile_commands.json
+.vscode/
+.cache/
+.clang-tidy
+.clang-format
+notes/
+.VSCodeCounter/
+iot-gateway.code-workspace

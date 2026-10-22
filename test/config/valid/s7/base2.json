@@ -1,0 +1,44 @@
+{"protocol": "s7",
+
+   "adapter":{"id": 4, "name": "s7 317F", "enabled": true },
+  "connection": { "ip": "192.168.10.83", "rack": 5, "slot": 3 },
+  "polling" :{ "intervalMs": 250 },
+  "reconnect": { "initialDelayMs": 250, "maxDelayMs": 2100, "factor": 2 },
+
+  "read": [
+{ "mode": "area","areaParams":{ "areaTarget": "db", "number":1, "offset": 0, "amount" : 20}, 
+  "tags": [
+    { "id": 0, "name": "Temperature","offset":0, "dataType": "REAL" },
+    { "id": 1, "name": "AnalogInput",  "offset":4, "dataType": "WORD" },
+    { "id": 2, "name": "AutoActive", "offset":6, "dataType": "BOOL", "bit": 5 },
+    { "id": 3, "name": "ErrorActive","offset":6, "dataType": "BOOL", "bit": 7 },
+    { "id": 4, "name": "ErrorActive","offset":6, "dataType": "BOOL", "bit": 7 },
+    { "id": 5, "name": "PartCounter","offset":8, "dataType": "WORD" },
+    { "id": 6, "name": "SetupActive","offset":10, "dataType": "BOOL", "bit": 2 },
+    { "id": 7, "name": "PartCounter2","offset":12, "dataType": "WORD" },
+    { "id": 8, "name": "PartCounter2","offset":14, "dataType": "WORD" },
+    { "id": 9, "name": "PartCounter2","offset":18, "dataType": "WORD" }
+    ]
+  },
+  { "mode": "multi", 
+  "tags": [
+    { "id": 10, "name": "char1", "target": "db", "number": 1, "offset": 18, "dataType": "CHAR"},
+    { "id": 11, "name": "string1", "target": "db", "number": 1, "offset": 20, "dataType": "STRING" , "length": 20},
+    { "id": 12, "name": "time1", "target": "db", "number": 1, "offset": 42, "dataType": "TIME"},
+    { "id": 13, "name": "date1", "target": "db", "number": 1, "offset": 46, "dataType": "DATE"},
+    { "id": 14, "name": "tod1", "target": "db", "number": 1, "offset": 48, "dataType": "TOD"},
+    { "id": 15, "name": "s5t1", "target": "db", "number": 1, "offset": 52, "dataType": "S5TIME"},
+    { "id": 16, "name": "Input", "target": "e", "offset": 212, "dataType": "BOOL", "bit": 3 },
+    { "id": 17, "name": "output", "target": "a", "offset": 50, "dataType": "BOOL", "bit": 5 },
+    { "id": 18, "name": "merker", "target": "m", "offset": 3, "dataType": "BOOL", "bit": 7 },
+    { "id": 19, "name": "output word", "target": "a", "offset": 220, "dataType": "WORD"},
+    { "id": 20, "name": "output Dword", "target": "a", "offset": 222, "dataType": "DWORD"},
+    { "id": 21, "name": "Input", "target": "db","number": 1, "offset": 6, "dataType": "BOOL", "bit": 5 },
+    { "id": 22, "name": "output", "target": "db", "number":1, "offset": 6, "dataType": "BOOL", "bit": 7 },
+    { "id": 23, "name": "Timer1", "target": "t", "number":1 },
+    { "id": 24, "name": "Counter1", "target": "c", "number":1 },
+    { "id": 25, "name": "wstring1", "target": "db", "number": 1, "offset": 0, "dataType": "WSTRING" , "length": 20}
+    ]
+  }
+]
+}
