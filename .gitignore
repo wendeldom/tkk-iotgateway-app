@@ -1,0 +1,7 @@
+build/
+.vscode/
+.cache/
+.clang-tidy
+.clang-format
+.clangd
+.VSCodeCounter/

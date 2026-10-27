@@ -1,0 +1,60 @@
+{"protocol":"s7",
+
+  "adapter":{"id": 1, "name": "s7 1200", "enabled": true },
+  "connection": { "ip": "192.168.10.11", "rack": 0, "slot": 1 },
+  "polling" :{ "intervalMs": 1000 },
+  "reconnect": { "initialDelayMs": 2000, "maxDelayMs": 30000, "factor": 2 },
+
+  "read": [
+
+{ "mode": "multi", 
+  "tags": [
+    { "id": 0, "name": "s0", "target": "db", "number": 1, "offset": 0, "dataType": "BOOL", "bit": 0},
+    { "id": 1, "name": "s1", "target": "db", "number": 1, "offset": 1, "dataType": "BYTE" },
+    { "id": 2, "name": "s2", "target": "db", "number": 1, "offset": 2, "dataType": "WORD" },
+    { "id": 3, "name": "s3", "target": "db", "number": 1, "offset": 4, "dataType": "DWORD" },
+    { "id": 4, "name": "s4", "target": "db", "number": 1, "offset": 8, "dataType": "SINT" },
+    { "id": 5, "name": "s5", "target": "db", "number": 1, "offset": 10, "dataType": "INT" },
+    { "id": 6, "name": "s6", "target": "db", "number": 1, "offset": 12, "dataType": "DINT" },
+    { "id": 7, "name": "s7", "target": "db", "number": 1, "offset": 16, "dataType": "USINT" },
+    { "id": 8, "name": "s8", "target": "db", "number": 1, "offset": 18, "dataType": "UINT" },
+    { "id": 9, "name": "s9", "target": "db", "number": 1, "offset": 20, "dataType": "UDINT" },
+    { "id": 10, "name": "s10", "target": "db", "number": 1, "offset": 24, "dataType": "REAL" },
+    { "id": 11, "name": "s11", "target": "db", "number": 1, "offset": 28, "dataType": "LREAL" },
+    { "id": 12, "name": "s12", "target": "db", "number": 1, "offset": 36, "dataType": "CHAR" },
+    { "id": 13, "name": "s13", "target": "db", "number": 1, "offset": 38, "dataType": "WCHAR" },
+    { "id": 14, "name": "s14", "target": "db", "number": 1, "offset": 40, "dataType": "STRING", "length": 24 },
+    { "id": 15, "name": "s15", "target": "db", "number": 1, "offset": 66, "dataType": "WSTRING", "length": 25 },
+    { "id": 16, "name": "s16", "target": "db", "number": 1, "offset": 120, "dataType": "TIME" },
+    { "id": 17, "name": "s17", "target": "db", "number": 1, "offset": 124, "dataType": "DATE" },
+    { "id": 18, "name": "s18", "target": "db", "number": 1, "offset": 126, "dataType": "TOD" },
+    { "id": 19, "name": "s19", "target": "db", "number": 1, "offset": 134, "dataType": "TIME" },
+    { "id": 20, "name": "s20", "target": "db", "number": 1, "offset": 150, "dataType": "TIME" },
+    { "id": 21, "name": "s21", "target": "db", "number": 1, "offset": 166, "dataType": "TIME" },
+    { "id": 22, "name": "s22", "target": "db", "number": 1, "offset": 182, "dataType": "INT" },
+    { "id": 23, "name": "s23", "target": "db", "number": 1, "offset": 186, "dataType": "INT" },
+    { "id": 24, "name": "s24", "target": "db", "number": 1, "offset": 194, "dataType": "INT" },
+    { "id": 25, "name": "s25", "target": "a", "offset": 0, "dataType": "BOOL" , "bit":0},
+    { "id": 26, "name": "s26", "target": "e", "offset": 0, "dataType": "BOOL" , "bit":0},
+    { "id": 27, "name": "s27", "target": "m", "offset": 5, "dataType": "BOOL" , "bit":0},
+    { "id": 28, "name": "s28", "target": "a", "offset": 10, "dataType": "WORD" },
+    { "id": 29, "name": "s29", "target": "e", "offset": 12, "dataType": "WORD" }
+    ]
+  },
+{ 
+"mode":"area","areaParams":{"areaTarget": "db", "number":1, "offset": 2, "amount": 18}, 
+  "tags": [
+    { "id": 30, "name": "Temperature","offset":0, "dataType": "REAL" },
+    { "id": 31, "name": "AnalogInput",  "offset":4, "dataType": "WORD" },
+    { "id": 32, "name": "AutoActive", "offset":6, "dataType": "BOOL", "bit": 5 },
+    { "id": 33, "name": "ErrorActive","offset":6, "dataType": "BOOL", "bit": 7 },
+    { "id": 34, "name": "ErrorActive","offset":6, "dataType": "BOOL", "bit": 7 },
+    { "id": 35, "name": "PartCounter","offset":8, "dataType": "WORD" },
+    { "id": 36, "name": "SetupActive","offset":10, "dataType": "BOOL", "bit": 2 },
+    { "id": 37, "name": "PartCounter2","offset":12, "dataType": "WORD" },
+    { "id": 38, "name": "PartCounter2","offset":14, "dataType": "WORD" },
+    { "id": 39, "name": "PartCounter2","offset":16, "dataType": "WORD" }
+    ]
+  }
+]
+}
