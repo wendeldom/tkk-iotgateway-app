@@ -121,7 +121,7 @@ void LogErrors(std::vector<Error> &&errs, std::string_view source) {
   static std::mutex log_mtx;
   std::scoped_lock lock(log_mtx);
   for (const auto &error : std::move(errs)) {
-    std::cerr << std::format("[src: {}] {}", source, error.Format()) << std::endl;
+    std::cerr << std::format("[src: {}] {}", source, error.Format()) << "\n";
   }
 }
 } // namespace tkk::log
