@@ -50,7 +50,14 @@ target_link_libraries(tkk_core PUBLIC snap7micro nlohmann_json utfcpp)
 add_executable(S7EmbeddedDriver src/main.cpp)
 target_link_libraries(S7EmbeddedDriver PRIVATE tkk_core)
 target_include_directories(S7EmbeddedDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(TKK_CONFIG_DIR "${CMAKE_SOURCE_DIR}/test/config" CACHE STRING "Config directory")
+
+if(CMAKE_CROSSCOMPILING)
+  set(TKK_CONFIG_DIR_DEFAULT "/etc/tkk-iotgateway")
+else()
+  set(TKK_CONFIG_DIR_DEFAULT "${CMAKE_SOURCE_DIR}/test/config")
+endif()
+set(TKK_CONFIG_DIR "${TKK_CONFIG_DIR_DEFAULT}" CACHE STRING "Config directory")
+
 target_compile_definitions(S7EmbeddedDriver PRIVATE TKK_CONFIG_DIR="${TKK_CONFIG_DIR}")
 target_compile_options(tkk_core PRIVATE -Wall -Wextra -Wpedantic)
 

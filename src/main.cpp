@@ -11,7 +11,7 @@
  * @return int
  */
 auto main() -> int {
-  tkk::adapter::Handler a1{TKK_CONFIG_DIR "/valid"};
+  tkk::adapter::Handler a1{TKK_CONFIG_DIR};
 
   auto res = a1.Start();
   if (!res) {

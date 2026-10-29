@@ -58,7 +58,7 @@ private:
   void DeleteId(size_t id);
 
   // setup
-  static constexpr std::string_view kDefConfigPath = "../test/config";
+  static constexpr std::string_view kDefConfigPath = "/etc/tkk-iotgateway";
   const std::filesystem::path config_path_;
   const std::filesystem::path s7_path_;
   const std::filesystem::path opc_path_;
