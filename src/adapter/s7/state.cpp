@@ -7,6 +7,7 @@
 #include "tkk/core/util.hpp"
 #include <cstddef>
 #include <cstdio>
+#include <iostream>
 #include <memory>
 #include <utility>
 
@@ -92,6 +93,8 @@ auto PollState::Update(IAdapter &interface) -> std::unique_ptr<State> {
   const AdapterCtx &adp_ctx = interface.GetContext();
 
   if (!entry_) {
+    std::cerr << std::format("[src: {}] Polling every {}ms", adp_ctx.name, adp_ctx.poll_interval)
+              << "\n";
     delay_ = adp_ctx.poll_interval;
     entry_ = true;
   }
