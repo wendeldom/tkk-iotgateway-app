@@ -156,12 +156,12 @@ auto Handler::CreateS7Adapter(const std::filesystem::path &path) -> Result<Adapt
   // Open file
   auto res_open = OpenAndParse(path);
   if (!res_open) {
-    return std::move(res_open).error().WithStr("path", path.c_str()).Fail();
+    return std::move(res_open).error().Fail();
   }
   // Extract protocol,id,name
   auto res_params = s7::GetAdapterParams(*res_open);
   if (!res_params) {
-    return std::move(res_params).error().WithStr("file", path.c_str()).Fail();
+    return std::move(res_params).error().Fail();
   }
   // Check for duplicate adapter ids
   if (IsDuplicateId(res_params->id)) {
