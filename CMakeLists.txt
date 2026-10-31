@@ -10,13 +10,13 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Snap7 library
 add_library(snap7micro SHARED
-    include/third_party/snap7micro/snap_msgsock.cpp
-    include/third_party/snap7micro/snap_sysutils.cpp
-    include/third_party/snap7micro/s7_micro_client.cpp
-    include/third_party/snap7micro/s7_isotcp.cpp
-    include/third_party/snap7micro/s7_peer.cpp
+    external/snap7micro/snap_msgsock.cpp
+    external/snap7micro/snap_sysutils.cpp
+    external/snap7micro/s7_micro_client.cpp
+    external/snap7micro/s7_isotcp.cpp
+    external/snap7micro/s7_peer.cpp
 )
-target_include_directories(snap7micro SYSTEM PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/snap7micro)
+target_include_directories(snap7micro SYSTEM PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/external/snap7micro)
 set_target_properties(snap7micro PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON
@@ -26,23 +26,23 @@ set_target_properties(snap7micro PROPERTIES
 
 # Json
 add_library(nlohmann_json INTERFACE)
-target_include_directories(nlohmann_json SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/nlohmann)
+target_include_directories(nlohmann_json SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/nlohmann)
 
 # utfcpp
 add_library(utfcpp INTERFACE)
-target_include_directories(utfcpp SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/utfcpp)
+target_include_directories(utfcpp SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/utfcpp)
 
 # Sqlite
 add_library(sqlite_cpp SHARED
-  include/third_party/sqlitecpp/src/Backup.cpp
-  include/third_party/sqlitecpp/src/Column.cpp
-  include/third_party/sqlitecpp/src/Database.cpp
-  include/third_party/sqlitecpp/src/Exception.cpp
-  include/third_party/sqlitecpp/src/Savepoint.cpp
-  include/third_party/sqlitecpp/src/Statement.cpp
-  include/third_party/sqlitecpp/src/Transaction.cpp
+  external/sqlitecpp/src/Backup.cpp
+  external/sqlitecpp/src/Column.cpp
+  external/sqlitecpp/src/Database.cpp
+  external/sqlitecpp/src/Exception.cpp
+  external/sqlitecpp/src/Savepoint.cpp
+  external/sqlitecpp/src/Statement.cpp
+  external/sqlitecpp/src/Transaction.cpp
 )
-target_include_directories(sqlite_cpp SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/sqlitecpp/include)
+target_include_directories(sqlite_cpp SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlitecpp/include)
 find_package(SQLite3 REQUIRED)
 target_link_libraries(sqlite_cpp PUBLIC SQLite3::SQLite3)
 
@@ -61,6 +61,7 @@ add_library(tkk_core STATIC
     src/core/util.cpp
 )
 target_include_directories(tkk_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(tkk_core SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 target_link_libraries(tkk_core PUBLIC snap7micro nlohmann_json utfcpp sqlite_cpp)
 

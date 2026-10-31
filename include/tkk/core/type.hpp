@@ -4,8 +4,8 @@
 #pragma once
 #include <chrono>
 #include <cstdint>
+#include <nlohmann/json.hpp>
 #include <string>
-#include <third_party/nlohmann/json.hpp>
 #include <unordered_set>
 #include <variant>
 

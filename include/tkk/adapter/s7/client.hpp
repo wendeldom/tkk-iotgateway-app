@@ -3,7 +3,7 @@
 
 #pragma once
 #include <memory>
-#include <third_party/snap7micro/s7_micro_client.h>
+#include <snap7micro/s7_micro_client.h>
 
 class ISnap7Client {
 
