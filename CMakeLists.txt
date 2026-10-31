@@ -44,7 +44,11 @@ add_library(sqlite_cpp STATIC
 )
 target_include_directories(sqlite_cpp SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlitecpp/include)
 find_package(SQLite3 REQUIRED)
-target_link_libraries(sqlite_cpp PUBLIC SQLite3::SQLite3)
+if(CMAKE_CROSSCOMPILING)
+  target_link_libraries(sqlite_cpp PUBLIC SQLite::SQLite3)
+else()
+  target_link_libraries(sqlite_cpp PUBLIC SQLite3::SQLite3)
+endif()
 
 # TKK gateway 
 add_library(tkk_core STATIC
