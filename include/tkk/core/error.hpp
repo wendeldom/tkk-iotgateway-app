@@ -28,6 +28,7 @@ enum class ErrC : U8 {
   kReadError,
   kDpError,
   kBatchError,
+  kDataBaseError,
   kDefaultParent,
 };
 enum class ErrA : U8 {

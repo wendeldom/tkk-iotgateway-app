@@ -30,6 +30,8 @@ namespace {
     return "data point error";
   case kBatchError:
     return "batch creation error";
+  case kDataBaseError:
+    return "database error";
   case kDefaultParent:
     return "";
   }
