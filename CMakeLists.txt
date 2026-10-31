@@ -52,16 +52,21 @@ endif()
 
 # TKK gateway 
 add_library(tkk_core STATIC
-    src/adapter/s7/helper.cpp
-    src/adapter/s7/config_validation.cpp
-    src/adapter/s7/config_rule.cpp
-    src/adapter/s7/batch_creation.cpp
-    src/adapter/s7/state.cpp
-    src/adapter/s7/adapter.cpp
-    src/adapter/s7/error.cpp
-    src/adapter/handler.cpp
-    src/core/error.cpp
-    src/core/util.cpp
+
+  # adapter
+  src/adapter/s7/helper.cpp
+  src/adapter/s7/config_validation.cpp
+  src/adapter/s7/config_rule.cpp
+  src/adapter/s7/batch_creation.cpp
+  src/adapter/s7/state.cpp
+  src/adapter/s7/adapter.cpp
+  src/adapter/s7/error.cpp
+  src/adapter/handler.cpp
+  # data sink
+  src/data_sink/data_sink.cpp
+  # core
+  src/core/error.cpp
+  src/core/util.cpp
 )
 target_include_directories(tkk_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(tkk_core SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
