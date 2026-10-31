@@ -24,11 +24,28 @@ set_target_properties(snap7micro PROPERTIES
     SOVERSION 1
 )
 
+# Json
 add_library(nlohmann_json INTERFACE)
 target_include_directories(nlohmann_json SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/nlohmann)
 
+# utfcpp
 add_library(utfcpp INTERFACE)
 target_include_directories(utfcpp SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/utfcpp)
+
+# Sqlite
+add_library(sqlite_cpp SHARED
+  include/third_party/sqlitecpp/src/Backup.cpp
+  include/third_party/sqlitecpp/src/Column.cpp
+  include/third_party/sqlitecpp/src/Database.cpp
+  include/third_party/sqlitecpp/src/Exception.cpp
+  include/third_party/sqlitecpp/src/Savepoint.cpp
+  include/third_party/sqlitecpp/src/Statement.cpp
+  include/third_party/sqlitecpp/src/Transaction.cpp
+)
+target_include_directories(sqlite_cpp SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/third_party/sqlitecpp/include)
+find_package(SQLite3 REQUIRED)
+target_link_libraries(sqlite_cpp PUBLIC SQLite3::SQLite3)
+
 
 # TKK gateway 
 add_library(tkk_core STATIC
@@ -43,14 +60,14 @@ add_library(tkk_core STATIC
     src/core/error.cpp
     src/core/util.cpp
 )
-target_include_directories(tkk_core PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(tkk_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(tkk_core PUBLIC snap7micro nlohmann_json utfcpp)
+target_link_libraries(tkk_core PUBLIC snap7micro nlohmann_json utfcpp sqlite_cpp)
 
 add_executable(S7EmbeddedDriver src/main.cpp)
 target_link_libraries(S7EmbeddedDriver PRIVATE tkk_core)
 target_include_directories(S7EmbeddedDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
+ 
 if(CMAKE_CROSSCOMPILING)
   set(TKK_CONFIG_DIR_DEFAULT "/etc/tkk-iotgateway")
 else()
