@@ -33,7 +33,7 @@ add_library(utfcpp INTERFACE)
 target_include_directories(utfcpp SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/utfcpp)
 
 # Sqlite
-add_library(sqlite_cpp SHARED
+add_library(sqlite_cpp STATIC
   external/sqlitecpp/src/Backup.cpp
   external/sqlitecpp/src/Column.cpp
   external/sqlitecpp/src/Database.cpp
@@ -45,7 +45,6 @@ add_library(sqlite_cpp SHARED
 target_include_directories(sqlite_cpp SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlitecpp/include)
 find_package(SQLite3 REQUIRED)
 target_link_libraries(sqlite_cpp PUBLIC SQLite3::SQLite3)
-
 
 # TKK gateway 
 add_library(tkk_core STATIC
