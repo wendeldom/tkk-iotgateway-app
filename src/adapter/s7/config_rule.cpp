@@ -71,7 +71,7 @@ constexpr std::array kTcDepKeys{
     detail::key::kNumber,
 };
 // Return the json type for a given key
-constexpr std::array kEyTypes = {
+constexpr std::array kKeyTypes = {
     KeyType{.key = detail::key::kAdapter, .type = JsonType::kObject},
     KeyType{.key = detail::key::kConnection, .type = JsonType::kObject},
     KeyType{.key = detail::key::kPolling, .type = JsonType::kObject},
@@ -328,8 +328,8 @@ auto IsValidNumber(int target, int value) -> bool {
 
 auto GetKeyType(const std::string_view key) -> JsonType {
   using enum JsonType;
-  const auto *it = std::ranges::find(kEyTypes, key, &KeyType::key);
-  if (it == kEyTypes.end()) {
+  const auto *it = std::ranges::find(kKeyTypes, key, &KeyType::key);
+  if (it == kKeyTypes.end()) {
     assert(false);
     std::abort();
   }
