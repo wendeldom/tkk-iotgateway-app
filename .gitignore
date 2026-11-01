@@ -5,3 +5,4 @@ build/
 .clang-format
 .clangd
 .VSCodeCounter/
+test/db/

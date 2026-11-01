@@ -79,12 +79,15 @@ target_include_directories(S7EmbeddedDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
  
 if(CMAKE_CROSSCOMPILING)
   set(TKK_CONFIG_DIR_DEFAULT "/etc/tkk-iotgateway")
+  set(TKK_DB_DIR_DEFAULT "/etc/tkk-iotgateway")
 else()
   set(TKK_CONFIG_DIR_DEFAULT "${CMAKE_SOURCE_DIR}/test/config/valid")
+  set(TKK_DB_DIR_DEFAULT "${CMAKE_SOURCE_DIR}/test/db")
 endif()
 set(TKK_CONFIG_DIR "${TKK_CONFIG_DIR_DEFAULT}" CACHE STRING "Config directory")
+set(TKK_DB_DIR "${TKK_DB_DIR_DEFAULT}" CACHE STRING "Database directory")
 
-target_compile_definitions(S7EmbeddedDriver PRIVATE TKK_CONFIG_DIR="${TKK_CONFIG_DIR}")
+target_compile_definitions(S7EmbeddedDriver PRIVATE TKK_CONFIG_DIR="${TKK_CONFIG_DIR}" TKK_DB_DIR="${TKK_DB_DIR}")
 target_compile_options(tkk_core PRIVATE -Wall -Wextra -Wpedantic)
 
 include(GNUInstallDirs)
@@ -109,7 +112,7 @@ set(TEST_SOURCES
 
   add_executable(tkk_tests ${TEST_SOURCES})
 
-target_compile_definitions(tkk_tests PRIVATE TKK_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/test/config/valid")
+target_compile_definitions(tkk_tests PRIVATE TKK_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/test/config")
 target_include_directories(tkk_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/)
   target_link_libraries(tkk_tests PRIVATE tkk_core Catch2::Catch2WithMain)
   catch_discover_tests(tkk_tests)
