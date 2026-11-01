@@ -36,8 +36,8 @@ struct HandlerStatus {
 
 class Handler final : private NoCopyNoMove {
 public:
-  explicit Handler(const std::filesystem::path &path = kDefConfigPath) noexcept
-      : config_path_(path), s7_path_(path / "s7"), opc_path_(path / "opcua") {}
+  explicit Handler(std::filesystem::path path = kDefConfigPath) noexcept
+      : config_path_(std::move(path)), s7_path_(path / "s7"), opc_path_(path / "opcua") {}
 
   ~Handler();
 
