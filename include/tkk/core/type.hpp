@@ -7,7 +7,6 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_set>
-#include <variant>
 
 namespace tkk {
 
@@ -24,14 +23,14 @@ using F64 = double;
 
 using Json = nlohmann::json;
 
-using GenericType = std::variant<std::string, bool, I8, U8, I16, U16, I32, U32, I64, U64, F32, F64>;
+using Bytes = std::vector<U8>;
 
 enum class Quality : U8 { kBad, kUncertain, kGood };
 
 struct DataPoint {
   U32 id{0};
   Quality quality{Quality::kBad};
-  GenericType data{0};
+  Bytes data{0};
   std::string type;
   std::chrono::system_clock::time_point timestamp;
   std::string name;

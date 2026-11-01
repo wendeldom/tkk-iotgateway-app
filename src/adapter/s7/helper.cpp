@@ -3,8 +3,10 @@
 
 #include "tkk/adapter/s7/helper.hpp"
 #include "tkk/adapter/s7/type.hpp"
+#include "tkk/core/type.hpp"
 #include "tkk/core/util.hpp"
 #include <algorithm>
+#include <cassert>
 #include <s7_types.h>
 #include <string_view>
 
@@ -157,16 +159,15 @@ auto ExtractBytes(SpanU8 buffer, U32 offset, U32 amount) -> Result<SpanU8> {
   return buffer.subspan(offset, amount);
 }
 
-/**
- * @brief Convert bytes to dataType
- *
- * @param bytes
- * @param item
- * @return Result<GenericType>
- */
-auto CvrtBytesToType(SpanU8 bytes, const TagItem &item) -> Result<GenericType> {
+auto SwapBytes(SpanU8 bytes, const TagItem &item) -> Result<Bytes> {
   using enum DataType;
 
+  if (bytes.empty()) {
+    return Error(ErrC::kDpError, ErrA::kFatal, "no data provided")
+        .With("tag id", item.id)
+        .With("requested", GetItemReadSize(item))
+        .Fail();
+  }
   if (bytes.size() != GetItemReadSize(item)) {
     return Error(ErrC::kDpError, ErrA::kFatal, "requested size does not match data type")
         .With("requested", bytes.size())
@@ -177,140 +178,103 @@ auto CvrtBytesToType(SpanU8 bytes, const TagItem &item) -> Result<GenericType> {
   switch (item.type) {
     // Signle bit
   case kBool: {
-    U8 raw{};
-    raw = bytes[0];
-    return static_cast<bool>((raw & (1 << item.bit)) != 0);
+    if (static_cast<bool>((bytes[0] & (1 << item.bit)) != 0)) {
+      return Bytes(1, 1);
+    }
+    return Bytes(1, 0);
   }
-    // Unsigned 1 byte
+    // 1 byte
   case kByte:
+  case kSint:
   case kUsint: {
-    U8 value{};
-    std::memcpy(&value, bytes.data(), sizeof(value));
-    return value;
+    return Bytes(bytes.begin(), bytes.end());
   }
-    // Signed 1 byte
-  case kSint: {
-    I8 value{};
-    std::memcpy(&value, bytes.data(), sizeof(value));
-    return value;
-  }
-    // Signed 2 byte
-  case kInt: {
-    I16 raw{};
-    I16 value{};
-    std::memcpy(&raw, bytes.data(), sizeof(raw));
-    raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
-  }
-    // Signed 4 byte
-  case kDint:
-  case kTime: {
-    I32 raw{};
-    I32 value{};
-    std::memcpy(&raw, bytes.data(), sizeof(raw));
-    raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
-  }
-    // Unsigned 2 byte
+    // 2 byte
   case kWord:
   case kUint:
-  case kDate: {
+  case kDate:
+  case kInt:
+  case kCounter: {
     U16 raw{};
-    U16 value{};
     std::memcpy(&raw, bytes.data(), sizeof(raw));
     raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
+    Bytes out(sizeof(raw));
+    std::memcpy(out.data(), &raw, sizeof(raw));
+    return out;
   }
-    // Unsigned 4 byte
+    // 4 byte
+  case kDint:
+  case kTime:
   case kDword:
   case kUdint:
-  case kTod: {
-    U32 raw{};
-    U32 value{};
-    std::memcpy(&raw, bytes.data(), sizeof(raw));
-    raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
-  }
-  // IEEE Standard 4 byte float
+  case kTod:
   case kReal: {
     U32 raw{};
-    F32 value{};
     std::memcpy(&raw, bytes.data(), sizeof(raw));
     raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
+    Bytes out(sizeof(raw));
+    std::memcpy(out.data(), &raw, sizeof(raw));
+    return out;
   }
-  // IEEE Standard 8 byte double
-  // Date and Time
+  // 8 byte
   case kLreal: {
     U64 raw{};
-    F64 value{};
     std::memcpy(&raw, bytes.data(), sizeof(raw));
     raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
+    Bytes out(sizeof(raw));
+    std::memcpy(out.data(), &raw, sizeof(raw));
+    return out;
   }
-    // String
+    // char
   case kChar: {
-    std::string value{};
-    value = util::Latin1ToUtf8(bytes);
-    return value;
+    const std::string text = util::Latin1ToUtf8(bytes);
+    return Bytes(text.begin(), text.end());
   }
+  // wchar
   case kWchar: {
-    std::string value{};
-    value = util::Utf16ToUtf8(bytes);
-    return value;
+    const std::string text = util::Utf16ToUtf8(bytes);
+    return Bytes(text.begin(), text.end());
   }
+  // string
   case kString: {
-    std::string value{};
-
-    int max_length = std::min(item.length,
-                              static_cast<I32>(bytes[0]));    // First byte: max length of string
-    value = util::Latin1ToUtf8(bytes.subspan(2, max_length)); // Offst 2 byte (max/actual len)
-    return value;
+    // First byte: max length of string
+    int max_length = std::min(item.length, static_cast<I32>(bytes[0]));
+    // 2 byte offset for max/actual length of string
+    std::string text = util::Latin1ToUtf8(bytes.subspan(2, max_length));
+    return Bytes(text.begin(), text.end());
   }
+  // wstring
   case kWstring: {
-    std::string value{};
-    U16 len{};
-
-    std::memcpy(&len, bytes.data(),
-                sizeof(len)); // First 2 byte: max length of string
-    len = std::byteswap(len);
-    int max_length = std::min(item.length, static_cast<I32>(len));
-    value = util::Latin1ToUtf8(
-        bytes.subspan(4, sizeof(char16_t) * max_length)); // Offset 4 byte (max/actual len)
-    return value;
+    U16 length{};
+    // First 2 byte: max length of string
+    std::memcpy(&length, bytes.data(), sizeof(length));
+    length = std::byteswap(length);
+    int max_length = std::min(item.length, static_cast<I32>(length));
+    // 4 byte offset for max/actual length of string
+    std::string text = util::Utf16ToUtf8(bytes.subspan(4, sizeof(char16_t) * max_length));
+    return Bytes(text.begin(), text.end());
   }
   // Timer
   case kS5Time:
   case kTimer: {
     U16 raw{};
-    U16 value{};
+
     std::memcpy(&raw, bytes.data(), sizeof(raw));
     raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return util::S5TimeToMillis(value);
-  }
-  // Counter
-  case kCounter: {
-    U16 raw{};
-    U16 value{};
-    std::memcpy(&raw, bytes.data(), sizeof(raw));
-    raw = std::byteswap(raw);
-    std::memcpy(&value, &raw, sizeof(value));
-    return value;
+    U32 value = util::S5TimeToMillis(raw);
+    Bytes out(sizeof(value));
+    std::memcpy(out.data(), &value, sizeof(value));
+    return out;
   }
   case kUnset:
     assert(false);
     break;
   }
-  return Error(ErrC::kDpError, ErrA::kFatal, "Data type could not be converted!")
-      .WithStr("requested", DataTypeToString(item.type))
+
+  return Error(ErrC::kDpError, ErrA::kFatal, "fatal error while byte swapping")
+      .With("tag id", item.id)
+      .With("provided data size", bytes.size())
+      .With("required", GetItemReadSize(item))
       .Fail();
 }
-
 } // namespace tkk::s7::detail

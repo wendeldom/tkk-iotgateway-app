@@ -17,6 +17,6 @@ namespace tkk::s7::detail {
 [[nodiscard]] auto StringToSnap7Area(std::string_view target) -> int;
 [[nodiscard]] auto GetItemReadSize(const TagItem &item) -> U32;
 [[nodiscard]] auto ExtractBytes(SpanU8 buffer, U32 offset, U32 amount) -> Result<SpanU8>;
-[[nodiscard]] auto CvrtBytesToType(SpanU8 bytes, const TagItem &item) -> Result<GenericType>;
+[[nodiscard]] auto SwapBytes(SpanU8 bytes, const TagItem &item) -> Result<Bytes>;
 
 } // namespace tkk::s7::detail

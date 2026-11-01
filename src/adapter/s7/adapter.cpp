@@ -9,6 +9,8 @@
 #include "tkk/adapter/s7/helper.hpp"
 #include "tkk/adapter/s7/state.hpp"
 #include "tkk/core/type.hpp"
+#include <format>
+#include <iostream>
 #include <memory>
 
 // #include <print>
@@ -342,11 +344,11 @@ auto Adapter::CreateAreaDp(ReadBatch &batch) -> Result<void> {
           !res_ext) {
         dp.quality = Quality::kBad;
         err.Add(std::move(res_ext).error());
-      } else if (auto res_cnv = detail::CvrtBytesToType(*res_ext, tag); !res_cnv) {
+      } else if (auto res_cnv = detail::SwapBytes(*res_ext, tag); !res_cnv) {
         dp.quality = Quality::kBad;
         err.Add(std::move(res_cnv).error());
       } else {
-        dp.data = *res_cnv;
+        dp.data = std::move(*res_cnv);
       }
     }
 
@@ -387,11 +389,11 @@ auto Adapter::CreateMultiDp(ReadBatch &batch) -> Result<void> {
           !res_ext) {
         dp.quality = kBad;
         err.Add(std::move(res_ext).error());
-      } else if (auto res_cnv = detail::CvrtBytesToType(*res_ext, tag); !res_cnv) {
+      } else if (auto res_cnv = detail::SwapBytes(*res_ext, tag); !res_cnv) {
         dp.quality = kBad;
         err.Add(std::move(res_cnv).error());
       } else {
-        dp.data = *res_cnv;
+        dp.data = std::move(*res_cnv);
       }
     }
 
@@ -499,26 +501,29 @@ void Adapter::DbgPrintConfig() {
     }
   }
 }
-
+*/
 void Adapter::DbgPrintCurrentDp() {
 
   std::scoped_lock lock{print_mtx_};
   for (const auto &batch : config_item_.batches) {
     for (const auto &dp : batch.data_points) {
-      std::println();
-      std::println("<-DataPoint->");
-      std::println("id:        {}", dp.id);
-      std::println("quality:   {}", static_cast<int>(dp.quality));
-      std::println("name:      {}", dp.name);
-      std::println("time:      {}", dp.timestamp);
-      std::println("type:      {}", dp.type);
-      std::print("data:      ");
-      std::visit([](const auto &value) { std::println("{}", value); }, dp.data);
-      std::println();
+      std::cout << "\n";
+      std::cout << "<-DataPoint->" << "\n";
+      std::cout << std::format("id:        {}", dp.id) << "\n";
+      std::cout << std::format("quality:   {}", static_cast<int>(dp.quality)) << "\n";
+      std::cout << std::format("name:      {}", dp.name) << "\n";
+      std::cout << std::format("time:      {}", dp.timestamp) << "\n";
+      std::cout << std::format("type:      {}", dp.type) << "\n";
+      std::cout << "data:      ";
+      for (const auto &byte : dp.data) {
+        std::cout << std::format("{:02X} ", byte);
+      }
+      std::cout << "\n";
     }
   }
 }
 
+/*
 void Adapter::DbgPrintCurrentMetric() {
   std::scoped_lock lock{print_mtx_};
   std::println("[{}]---Adapter Metric updated---", config_item_.ctx.id);
