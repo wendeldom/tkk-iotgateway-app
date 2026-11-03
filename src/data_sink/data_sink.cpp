@@ -27,7 +27,7 @@ const std::string kOpenCreateSinkTable = R"(
 auto Sink::OpenDatabase() -> Result<void> {
 
   try {
-    db_.emplace(db_path_ / "sink.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db_.emplace(db_path_ / "sink.sqlite", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     db_->exec(kOpenCreateSinkTable);
 
     // Initialize prepared statements for insert and select operations
