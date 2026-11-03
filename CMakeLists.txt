@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(S7EmbeddedDriver LANGUAGES C CXX)
+project(iot-gateway LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -73,9 +73,9 @@ target_include_directories(tkk_core SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ex
 
 target_link_libraries(tkk_core PUBLIC snap7micro nlohmann_json utfcpp sqlite_cpp)
 
-add_executable(S7EmbeddedDriver src/main.cpp)
-target_link_libraries(S7EmbeddedDriver PRIVATE tkk_core)
-target_include_directories(S7EmbeddedDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE tkk_core)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
  
 if(CMAKE_CROSSCOMPILING)
   set(TKK_CONFIG_DIR_DEFAULT "/etc/tkk-iotgateway")
@@ -87,11 +87,11 @@ endif()
 set(TKK_CONFIG_DIR "${TKK_CONFIG_DIR_DEFAULT}" CACHE STRING "Config directory")
 set(TKK_DB_DIR "${TKK_DB_DIR_DEFAULT}" CACHE STRING "Database directory")
 
-target_compile_definitions(S7EmbeddedDriver PRIVATE TKK_CONFIG_DIR="${TKK_CONFIG_DIR}" TKK_DB_DIR="${TKK_DB_DIR}")
+target_compile_definitions(${PROJECT_NAME} PRIVATE TKK_CONFIG_DIR="${TKK_CONFIG_DIR}" TKK_DB_DIR="${TKK_DB_DIR}")
 target_compile_options(tkk_core PRIVATE -Wall -Wextra -Wpedantic)
 
 include(GNUInstallDirs)
-install(TARGETS S7EmbeddedDriver RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS snap7micro LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 
@@ -108,6 +108,7 @@ set(TEST_SOURCES
     test/adapter/s7/batch_creation.cpp
     test/adapter/s7/adapter.cpp
     test/adapter/s7/state.cpp
+    test/data_sink/data_sink.cpp
 )
 
   add_executable(tkk_tests ${TEST_SOURCES})
