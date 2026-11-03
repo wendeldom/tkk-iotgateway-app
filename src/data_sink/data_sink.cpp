@@ -7,7 +7,6 @@
 #include <mutex>
 #include <stop_token>
 #include <string_view>
-#include <utility>
 
 namespace tkk::sink {
 namespace {
@@ -22,6 +21,10 @@ const std::string kOpenCreateSinkTable = R"(
                               )
                               )";
 
+}
+
+Sink::~Sink() {
+  Stop();
 }
 
 void Sink::InitStatements() {
@@ -40,8 +43,7 @@ auto Sink::OpenDatabase() -> Result<void> {
     InitStatements();
 
   } catch (const SQLite::Exception &e) {
-    return Error(ErrC::kDataBaseError, ErrA::kFatal,
-                 "Unable to open or create SQLite sink database")
+    return Error(ErrC::kFileError, ErrA::kFatal, "Unable to open or create SQLite sink database")
         .WithStr("path", db_path_.c_str())
         .WithStr("what", e.what())
         .With("code", e.getErrorCode())
@@ -104,16 +106,27 @@ auto Sink::Start() -> Result<void> {
   if (auto res = OpenDatabase(); !res) { return res; }
   std::cout << "DBG: Database opened successfully" << "\n";
 
-  worker_thread_ = std::jthread([this](const std::stop_token &st) { Run(st); });
+  worker_thread_ = std::jthread([this](const std::stop_token &st) -> void { Run(st); });
   return {};
+}
+
+void Sink::Stop() {
+  insert_stmt_.reset();
+  select_stmt_.reset();
+  db_.reset();
+
+  if (worker_thread_.joinable()) {
+    worker_thread_.request_stop();
+    worker_thread_.join();
+  }
 }
 
 void Sink::Run(const std::stop_token &st) {
   std::unique_lock lock(wait_mtx_);
 
-  while (true) {
+  while (!st.stop_requested()) {
     cv_.wait(lock, st, [&] -> bool { return !queue_.empty(); });
-    if (stop_requested_ && queue_.empty()) { break; }
+    if (st.stop_requested() && queue_.empty()) { break; }
     auto batch = std::exchange(queue_, {});
     lock.unlock();
     for (auto &data_point : batch) {

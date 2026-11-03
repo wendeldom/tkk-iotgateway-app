@@ -17,12 +17,14 @@
 
 namespace tkk::sink {
 
-class Sink final {
+class Sink {
 public:
   explicit Sink(std::filesystem::path db_path = kDefDbPath) noexcept
       : db_path_(std::move(db_path)) {};
+  ~Sink();
 
   [[nodiscard]] auto Start() -> Result<void>;
+  void Stop();
 
 private:
   void Run(const std::stop_token &st);
@@ -40,15 +42,14 @@ private:
   std::optional<SQLite::Statement> select_stmt_;
   std::optional<SQLite::Database> db_;
 
+  // sink
+  std::deque<DataPoint> queue_;
+
   // thread
   std::mutex wait_mtx_;
   std::mutex status_mtx_;
   std::condition_variable_any cv_;
-  bool stop_requested_{false};
   std::jthread worker_thread_;
-
-  // sink
-  std::deque<DataPoint> queue_;
 };
 
 } // namespace tkk::sink
