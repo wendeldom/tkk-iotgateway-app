@@ -114,6 +114,7 @@ set(TEST_SOURCES
   add_executable(tkk_tests ${TEST_SOURCES})
 
 target_compile_definitions(tkk_tests PRIVATE TKK_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/test/config")
+target_compile_definitions(tkk_tests PRIVATE TKK_TEST_DB_DIR="${CMAKE_SOURCE_DIR}/test/db")
 target_include_directories(tkk_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/)
   target_link_libraries(tkk_tests PRIVATE tkk_core Catch2::Catch2WithMain)
   catch_discover_tests(tkk_tests)
