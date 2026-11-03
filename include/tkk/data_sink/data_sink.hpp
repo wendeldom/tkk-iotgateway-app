@@ -26,6 +26,7 @@ public:
 
 private:
   void Run(const std::stop_token &st);
+  void InitStatements();
   [[nodiscard]] auto GetStatus() -> int;
   [[nodiscard]] auto OpenDatabase() -> Result<void>;
   [[nodiscard]] auto WriteEntry(const DataPoint &data_point) -> Result<void>;

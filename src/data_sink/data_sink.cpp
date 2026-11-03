@@ -24,6 +24,12 @@ const std::string kOpenCreateSinkTable = R"(
 
 }
 
+void Sink::InitStatements() {
+  insert_stmt_.emplace(*db_, "INSERT INTO data (quality, data, data_type, timestamp_ms, name) "
+                             "VALUES (?, ?, ?, ?, ?)");
+  select_stmt_.emplace(*db_, "SELECT id, quality, data, data_type, timestamp_ms, name FROM data");
+}
+
 auto Sink::OpenDatabase() -> Result<void> {
 
   try {
@@ -31,9 +37,7 @@ auto Sink::OpenDatabase() -> Result<void> {
     db_->exec(kOpenCreateSinkTable);
 
     // Initialize prepared statements for insert and select operations
-    insert_stmt_.emplace(*db_, "INSERT INTO data (quality, data, data_type, timestamp_ms, name) "
-                               "VALUES (?, ?, ?, ?, ?)");
-    select_stmt_.emplace(*db_, "SELECT id, quality, data, data_type, timestamp_ms, name FROM data");
+    InitStatements();
 
   } catch (const SQLite::Exception &e) {
     return Error(ErrC::kDataBaseError, ErrA::kFatal,
