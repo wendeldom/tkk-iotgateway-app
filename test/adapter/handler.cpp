@@ -24,7 +24,7 @@ struct HandlerFixture {
 
   ~HandlerFixture() { RemoveTemp(); }
 
-  void WriteToS7Dir(const std::string &file, const nlohmann::json &cfg) const {
+  void WriteToS7Dir(const std::string &file, const tkk::Json &cfg) const {
     std::ofstream(dir / "s7" / (file + ".json")) << cfg.dump(2);
   }
 
