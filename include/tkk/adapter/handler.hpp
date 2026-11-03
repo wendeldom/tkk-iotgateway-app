@@ -74,7 +74,6 @@ private:
   std::mutex wait_mtx_;
   std::mutex status_mtx_;
   std::condition_variable_any cv_;
-  bool stop_requested_{false};
   std::jthread worker_thread_;
 };
 } // namespace tkk::adapter
