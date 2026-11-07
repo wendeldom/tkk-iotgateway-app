@@ -25,9 +25,10 @@ public:
   [[nodiscard]] auto OpenDatabase() -> Result<void>;
   [[nodiscard]] auto RunOnce() -> Result<void>;
   [[nodiscard]] auto Flush() -> Result<void>;
+  [[nodiscard]] auto DataAvailable() -> bool;
+  [[nodiscard]] auto GetQueueSize() -> std::size_t;
+  [[nodiscard]] auto GetTableSize() -> Result<std::size_t>;
   void Push(std::vector<DataPoint> &&data_points);
-
-  [[nodiscard]] auto DataAvailable() -> bool { return !queue_.empty(); };
 
 private:
   [[nodiscard]] auto WriteEntry(const DataPoint &data_point) -> Result<void>;
