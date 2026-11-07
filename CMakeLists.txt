@@ -63,7 +63,8 @@ add_library(tkk_core STATIC
   src/adapter/s7/error.cpp
   src/adapter/handler.cpp
   # data sink
-  src/data_sink/data_sink.cpp
+  src/data_sink/sink_engine.cpp
+  src/data_sink/sink_worker.cpp
   # core
   src/core/error.cpp
   src/core/util.cpp

@@ -3,7 +3,7 @@
 
 #include "tkk/adapter/handler.hpp"
 #include "tkk/core/util.hpp"
-#include "tkk/data_sink/data_sink.hpp"
+#include "tkk/data_sink/sink_worker.hpp"
 #include <thread>
 
 /**
@@ -13,7 +13,8 @@
  */
 auto main() -> int {
   // tkk::adapter::Handler a1{TKK_CONFIG_DIR};
-  tkk::sink::Sink s1{TKK_DB_DIR};
+  tkk::sink::SinkEngine e1{TKK_DB_DIR};
+  tkk::sink::SinkWorker s1{e1};
 
   // auto res_handler = a1.Start();
   auto res_sink = s1.Start();

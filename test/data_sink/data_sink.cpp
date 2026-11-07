@@ -1,5 +1,5 @@
-#include "tkk/data_sink/data_sink.hpp"
 #include "helper/helper.hpp"
+#include "tkk/data_sink/sink_worker.hpp"
 #include <filesystem>
 
 namespace {
@@ -23,8 +23,9 @@ struct SinkFixture {
 } // namespace
 
 TEST_CASE_METHOD(SinkFixture, "sink: valid db path", "[sink]") {
-  tkk::sink::Sink sink{dir};
-  auto res = sink.Start();
+  tkk::sink::SinkEngine e1{dir};
+  tkk::sink::SinkWorker s1{e1};
+  auto res = s1.Start();
   REQUIRE(res);
   REQUIRE(std::filesystem::exists(dir / "sink.sqlite"));
   CHECK(std::filesystem::is_regular_file(dir / "sink.sqlite"));
@@ -32,8 +33,9 @@ TEST_CASE_METHOD(SinkFixture, "sink: valid db path", "[sink]") {
 
 TEST_CASE_METHOD(SinkFixture, "sink: invalid db path", "[sink]") {
   const auto fake_dir = dir / "fake_path";
-  tkk::sink::Sink sink{fake_dir};
-  auto res = sink.Start();
+  tkk::sink::SinkEngine e1{fake_dir};
+  tkk::sink::SinkWorker s1{e1};
+  auto res = s1.Start();
   REQUIRE_FALSE(res);
   CHECK_FALSE(std::filesystem::exists(fake_dir / "sink.sqlite"));
   CheckError(std::move(res).error(), tkk::ErrC::kFileError, {"unable", "sink", "database"});
