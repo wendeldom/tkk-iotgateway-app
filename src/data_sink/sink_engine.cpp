@@ -11,14 +11,14 @@
 
 namespace tkk::sink {
 namespace {
-constexpr std::string kDataTableName = "data";
-constexpr std::string kDbName = "sink";
-constexpr std::string kColumnId = "id";
-constexpr std::string kColumnQuality = "quality";
-constexpr std::string kColumnData = "data";
-constexpr std::string kColumnDataType = "data_type";
-constexpr std::string kColumnTimestampMs = "timestamp_ms";
-constexpr std::string kColumnName = "name";
+const std::string kDataTableName = "data";
+const std::string kDbName = "sink";
+const std::string kColumnId = "id";
+const std::string kColumnQuality = "quality";
+const std::string kColumnData = "data";
+const std::string kColumnDataType = "data_type";
+const std::string kColumnTimestampMs = "timestamp_ms";
+const std::string kColumnName = "name";
 const std::string kCountTable = "SELECT COUNT(*) FROM " + kDataTableName;
 const std::string kOpenCreateDataTable =
     "CREATE TABLE IF NOT EXISTS " + kDataTableName + " (" + kColumnId +
@@ -54,11 +54,14 @@ auto SinkEngine::OpenDatabase() -> Result<void> {
 }
 
 void SinkEngine::InitStatements() {
-  insert_stmt_.emplace(*db_, "INSERT INTO " + kDataTableName +
-                                 " (quality, data, data_type, timestamp_ms, name) "
+  insert_stmt_.emplace(*db_, "INSERT INTO " + kDataTableName + " (" + kColumnQuality + ", " +
+                                 kColumnData + ", " + kColumnDataType + ", " + kColumnTimestampMs +
+                                 ", " + kColumnName +
+                                 ") "
                                  "VALUES (?, ?, ?, ?, ?)");
-  select_stmt_.emplace(*db_, "SELECT id, quality, data, data_type, timestamp_ms, name FROM " +
-                                 kDataTableName);
+  select_stmt_.emplace(*db_, "SELECT " + kColumnId + ", " + kColumnQuality + ", " + kColumnData +
+                                 ", " + kColumnDataType + ", " + kColumnTimestampMs + ", " +
+                                 kColumnName + " FROM " + kDataTableName);
 }
 
 void SinkEngine::Push(std::vector<DataPoint> &&data_points) {
@@ -105,8 +108,10 @@ auto SinkEngine::WriteEntry(const DataPoint &data_point) -> Result<void> {
   namespace chr = std::chrono;
   try {
     insert_stmt_.reset();
-    insert_stmt_.emplace(*db_, "INSERT INTO " + kDataTableName +
-                                   " (quality, data, data_type, timestamp_ms, name) "
+    insert_stmt_.emplace(*db_, "INSERT INTO " + kDataTableName + " (" + kColumnQuality + ", " +
+                                   kColumnData + ", " + kColumnDataType + ", " +
+                                   kColumnTimestampMs + ", " + kColumnName +
+                                   ") "
                                    "VALUES (?, ?, ?, ?, ?)");
     insert_stmt_->bind(1, static_cast<int>(data_point.quality));
     insert_stmt_->bind(2, data_point.data.data(), static_cast<int>(data_point.data.size()));
