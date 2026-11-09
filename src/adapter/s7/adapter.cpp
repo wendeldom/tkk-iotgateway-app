@@ -91,9 +91,7 @@ void Adapter::CycleGuard(const std::stop_token &st) {
 
     cv_.wait_for(lock, st, std::chrono::milliseconds(state_->GetDelay()), [] { return false; });
 
-    if (next != nullptr) {
-      state_ = std::move(next);
-    }
+    if (next != nullptr) { state_ = std::move(next); }
   }
 }
 
@@ -103,9 +101,7 @@ void Adapter::CycleGuard(const std::stop_token &st) {
  * @return Result<void>
  */
 auto Adapter::Init() -> Result<void> {
-  if (auto res = ConfigureAdapter(); !res) {
-    return res;
-  }
+  if (auto res = ConfigureAdapter(); !res) { return res; }
   return {};
 }
 
@@ -159,9 +155,7 @@ auto Adapter::Prepare() -> Result<void> {
   }
 
   auto res = Creator{config_data_, client_->GetPduLength()}.Create();
-  if (!res) {
-    return std::move(res).error().Fail();
-  }
+  if (!res) { return std::move(res).error().Fail(); }
   config_item_ = std::move(*res);
   // Set id + name again (1. time in constructor) bcs. we got a new config
   // item
@@ -188,14 +182,10 @@ auto Adapter::Poll() -> Result<void> {
 
     switch (batch.header.mode) {
     case kArea:
-      if (auto res = StartSnap7AreaRead(batch); !res) {
-        err.Add(std::move(res).error());
-      }
+      if (auto res = StartSnap7AreaRead(batch); !res) { err.Add(std::move(res).error()); }
       break;
     case kMulti:
-      if (auto res = StartSnap7MultiRead(batch); !res) {
-        err.Add(std::move(res).error());
-      }
+      if (auto res = StartSnap7MultiRead(batch); !res) { err.Add(std::move(res).error()); }
       break;
     case kUnset:
       assert(false);
@@ -203,18 +193,12 @@ auto Adapter::Poll() -> Result<void> {
     }
     // Check if an error needs a reconnect, if so, return, otherwise just keep
     // reading
-    if (err.GetAction() >= ErrA::kReconnect) {
-      return std::move(err).Fail();
-    }
+    if (err.GetAction() >= ErrA::kReconnect) { return std::move(err).Fail(); }
   }
 
-  if (auto res = CreateDataPoints(); !res) {
-    err.Add(std::move(res).error());
-  }
+  if (auto res = CreateDataPoints(); !res) { err.Add(std::move(res).error()); }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -276,9 +260,7 @@ auto Adapter::StartSnap7MultiRead(ReadBatch &batch) -> Result<void> {
                   .WithView("info", GetSnapErrInfo(item.Result).text));
     }
   }
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -294,14 +276,10 @@ auto Adapter::CreateDataPoints() -> Result<void> {
   for (auto &batch : config_item_.batches) {
     switch (batch.header.mode) {
     case kArea:
-      if (auto res = CreateAreaDp(batch); !res) {
-        err.Add(std::move(res).error());
-      }
+      if (auto res = CreateAreaDp(batch); !res) { err.Add(std::move(res).error()); }
       break;
     case kMulti:
-      if (auto res = CreateMultiDp(batch); !res) {
-        err.Add(std::move(res).error());
-      }
+      if (auto res = CreateMultiDp(batch); !res) { err.Add(std::move(res).error()); }
       break;
     case kUnset:
       assert(false);
@@ -309,9 +287,7 @@ auto Adapter::CreateDataPoints() -> Result<void> {
     }
   }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -325,9 +301,7 @@ auto Adapter::CreateAreaDp(ReadBatch &batch) -> Result<void> {
   batch.data_points.clear();
 
   // Only have th whole read result as quality indicator in area read
-  if (batch.header.status == 0) {
-    quality = Quality::kGood;
-  }
+  if (batch.header.status == 0) { quality = Quality::kGood; }
 
   for (const auto &tag : batch.tags) {
     DataPoint dp{};
@@ -355,9 +329,7 @@ auto Adapter::CreateAreaDp(ReadBatch &batch) -> Result<void> {
     batch.data_points.push_back(std::move(dp));
   }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -402,9 +374,7 @@ auto Adapter::CreateMultiDp(ReadBatch &batch) -> Result<void> {
     idx++;
   }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -417,9 +387,7 @@ auto Adapter::ConfigureAdapter() -> Result<void> {
 
   auto res = Validator(std::move(config_data_)).Validate();
 
-  if (!res) {
-    return std::move(res).error().Fail();
-  }
+  if (!res) { return std::move(res).error().Fail(); }
   config_data_ = std::move(*res);
   connection_ = GetConnParams(config_data_);
   return {};

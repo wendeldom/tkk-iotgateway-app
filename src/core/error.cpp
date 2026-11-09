@@ -42,9 +42,7 @@ namespace {
 
 void Error::PushField(const std::string_view key, const FieldValue &value) {
   ctx_.reserve(kFieldLimit);
-  if (!FieldLimitExceeded()) {
-    ctx_.emplace_back(key, value);
-  }
+  if (!FieldLimitExceeded()) { ctx_.emplace_back(key, value); }
 }
 
 auto Error::Add(Error &&err) -> void {
@@ -58,17 +56,13 @@ auto Error::Add(Error &&err) -> void {
     // Make sure the most singf. error reaction actually gets done, even when
     // the error itself does not fit into sub error vector
     err.action_ > action_ ? action_ = err.action_ : action_;
-    if (!SubErrLimitExceeded()) {
-      sub_err_.push_back(std::move(err));
-    }
+    if (!SubErrLimitExceeded()) { sub_err_.push_back(std::move(err)); }
   }
   for (auto &error : children) {
     // Make sure the most singf. error reaction actually gets done, even when
     // the error itself does not fit into sub error vector
     error.action_ > action_ ? action_ = error.action_ : action_;
-    if (!SubErrLimitExceeded()) {
-      sub_err_.push_back(std::move(error));
-    }
+    if (!SubErrLimitExceeded()) { sub_err_.push_back(std::move(error)); }
   }
 }
 

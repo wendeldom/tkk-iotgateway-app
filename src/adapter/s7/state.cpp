@@ -16,14 +16,10 @@ namespace tkk::s7 {
 auto InitState::Update(IAdapter &interface) -> std::unique_ptr<State> {
   // const AdapterCtx &adp_ctx = interface.GetContext();
 
-  if (!entry_) {
-    entry_ = true;
-  }
+  if (!entry_) { entry_ = true; }
 
   auto res = interface.Init();
-  if (!res) {
-    return NextStateAfterError(std::move(res).error(), interface);
-  }
+  if (!res) { return NextStateAfterError(std::move(res).error(), interface); }
 
   interface.PublishStateMetric(metric_);
   return std::make_unique<ConnectState>();
@@ -32,9 +28,7 @@ auto InitState::Update(IAdapter &interface) -> std::unique_ptr<State> {
 auto ConnectState::Update(IAdapter &interface) -> std::unique_ptr<State> {
   const AdapterCtx &adp_ctx = interface.GetContext();
 
-  if (!entry_) {
-    entry_ = true;
-  }
+  if (!entry_) { entry_ = true; }
   auto res = interface.Connect();
   if (!res) {
     delay_ = adp_ctx.init_reconn_delay;
@@ -75,15 +69,11 @@ auto ReconnectState::Update(IAdapter &interface) -> std::unique_ptr<State> {
 auto PrepareState::Update(IAdapter &interface) -> std::unique_ptr<State> {
   // const AdapterCtx &adp_ctx = interface.GetContext();
 
-  if (!entry_) {
-    entry_ = true;
-  }
+  if (!entry_) { entry_ = true; }
 
   auto res = interface.Prepare();
 
-  if (!res) {
-    return NextStateAfterError(std::move(res).error(), interface);
-  }
+  if (!res) { return NextStateAfterError(std::move(res).error(), interface); }
 
   interface.PublishStateMetric(metric_);
   return std::make_unique<PollState>();
@@ -108,9 +98,7 @@ auto PollState::Update(IAdapter &interface) -> std::unique_ptr<State> {
   interface.PublishStateMetric(metric_);
   metric_ = StateMetric{};
 
-  if (!res) {
-    return NextStateAfterError(std::move(res).error(), interface);
-  }
+  if (!res) { return NextStateAfterError(std::move(res).error(), interface); }
 
   return nullptr;
 }
@@ -145,9 +133,7 @@ auto State::NextStateAfterError(Error &&err, IAdapter &interface) -> std::unique
     interface.PublishStateMetric(metric_);
     return std::make_unique<FaultState>();
   case ErrA::kReconnect:
-    if (state_id_ == StateId::kReconnect) {
-      return nullptr;
-    }
+    if (state_id_ == StateId::kReconnect) { return nullptr; }
     delay_ = adp_ctx.init_reconn_delay;
     interface.PublishStateMetric(metric_);
     return std::make_unique<ReconnectState>();

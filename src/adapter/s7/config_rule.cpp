@@ -169,19 +169,13 @@ auto CheckRange(const Json &obj, const std::string_view key) -> Result<void> {
 
   switch (type) {
   case JsonType::kUInt:
-    if (util::InRange(util::GetUint(obj, key), it->min, it->max)) {
-      return {};
-    }
+    if (util::InRange(util::GetUint(obj, key), it->min, it->max)) { return {}; }
     break;
   case JsonType::kInt:
-    if (util::InRange(util::GetInt(obj, key), it->min, it->max)) {
-      return {};
-    }
+    if (util::InRange(util::GetInt(obj, key), it->min, it->max)) { return {}; }
     break;
   case JsonType::kString:
-    if (util::InRange(util::GetStr(obj, key).length(), it->min, it->max)) {
-      return {};
-    }
+    if (util::InRange(util::GetStr(obj, key).length(), it->min, it->max)) { return {}; }
     break;
   default:
     return {};
@@ -216,13 +210,9 @@ auto CheckDataType(const Json &obj, const std::string_view key) -> Result<void> 
 
   // Check dataType dependent keys
   const auto *it = std::ranges::find(kDataTypeDep, data_type, &DataTypeDep::type);
-  if (it == kDataTypeDep.end()) {
-    return {};
-  }
+  if (it == kDataTypeDep.end()) { return {}; }
   const auto res = RequiredKey(obj, it->dep_key);
-  if (!res) {
-    return res;
-  }
+  if (!res) { return res; }
 
   return {};
 }
@@ -235,9 +225,7 @@ auto CheckAreaTarget(const Json &obj, const std::string_view key) -> Result<void
   }
 
   const auto target = detail::StringToSnap7Area(util::GetStr(obj, key));
-  if (target == S7AreaDB) {
-    return RequiredKey(obj, detail::key::kNumber);
-  }
+  if (target == S7AreaDB) { return RequiredKey(obj, detail::key::kNumber); }
 
   return {};
 }
@@ -246,9 +234,7 @@ auto CheckIp(const Json &obj, const std::string_view key) -> Result<void> {
 
   const auto ip = util::IsValidIp(util::GetStr(obj, key));
 
-  if (!ip) {
-    return Error(ErrC::kConfigInvalid, ErrA::kFatal, "invalid ip").Fail();
-  }
+  if (!ip) { return Error(ErrC::kConfigInvalid, ErrA::kFatal, "invalid ip").Fail(); }
   return {};
 }
 
@@ -264,17 +250,11 @@ auto CheckTarget(const Json &obj, const std::string_view key) -> Result<void> {
 
   // Check target dependent keys
   const auto *it = std::ranges::find(kTargetDep, target, &TargetDep::target);
-  if (it == kTargetDep.end()) {
-    return {};
-  }
+  if (it == kTargetDep.end()) { return {}; }
 
   for (const auto key : it->dep_keys) {
-    if (auto res = RequiredKey(obj, key); !res) {
-      return res;
-    }
-    if (auto res = CheckRule(obj, key); !res) {
-      return res;
-    }
+    if (auto res = RequiredKey(obj, key); !res) { return res; }
+    if (auto res = CheckRule(obj, key); !res) { return res; }
   }
 
   return {};
@@ -408,9 +388,7 @@ auto RequiredKey(const Json &obj, const std::string_view key) -> Result<void> {
 
 auto CheckRule(const Json &obj, const std::string_view key) -> Result<void> {
   const auto *it = std::ranges::find(kRules, key, &Rule::key);
-  if (it == kRules.end()) {
-    return {};
-  }
+  if (it == kRules.end()) { return {}; }
   return it->check(obj, key);
 }
 

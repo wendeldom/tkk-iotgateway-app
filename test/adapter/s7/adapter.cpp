@@ -78,9 +78,7 @@ auto Fake7Client::ConnectTo(const char *rem_address, int rack, int slot) -> int 
   }
 
   connect_calls++;
-  if (connect_results.empty()) {
-    return default_res;
-  }
+  if (connect_results.empty()) { return default_res; }
   auto res = connect_results.front();
   connect_results.pop_front();
   return res;
@@ -91,9 +89,7 @@ auto Fake7Client::ReadArea(int area, int db_number, int start, int amount, int w
                            void *p_usr_data) -> int {
   area_calls++;
   last_area_ptr = p_usr_data;
-  if (area_results.empty()) {
-    return default_res;
-  }
+  if (area_results.empty()) { return default_res; }
   auto res = area_results.front();
   area_results.pop_front();
   return res;
@@ -112,9 +108,7 @@ auto Fake7Client::ReadMultiVars(PS7DataItem item, int items_count) -> int {
     multi_item_results.pop_front();
   }
 
-  if (multi_results.empty()) {
-    return default_res;
-  }
+  if (multi_results.empty()) { return default_res; }
   auto res = multi_results.front();
   multi_results.pop_front();
   return res;

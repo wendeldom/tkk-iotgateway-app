@@ -25,9 +25,7 @@ auto Creator::Create() -> Result<ConfigItem> {
   }
 
   CreateAdapterCtx();
-  if (auto res = CreateReadConfig(); !res) {
-    return (std::move(res).error().Fail());
-  }
+  if (auto res = CreateReadConfig(); !res) { return (std::move(res).error().Fail()); }
   SetupBatches();
   SetupS7Items();
 
@@ -71,9 +69,7 @@ auto Creator::CreateReadConfig() -> Result<void> {
       assert(false);
       std::abort();
     }
-    if (!res) {
-      return res;
-    }
+    if (!res) { return res; }
   }
 
   return {};
@@ -102,9 +98,7 @@ auto Creator::SetupS7Items() -> void {
   for (auto &batch : config_item_.batches) {
 
     // Only required for multi read batches
-    if (batch.header.mode == ReadMode::kArea) {
-      continue;
-    }
+    if (batch.header.mode == ReadMode::kArea) { continue; }
 
     batch.snap7_data_items.reserve(batch.header.item_count);
     size_t offset{0};
@@ -148,9 +142,7 @@ auto AreaCreator::Create() -> Result<void> {
   batch.header.mode = ReadMode::kArea;
   batch.header.target = detail::StringToSnap7Area(GetStr(params, key::kAreaTarget));
   // Only target = "db" has number field
-  if (batch.header.target == S7AreaDB) {
-    batch.header.number = params.at(key::kNumber);
-  }
+  if (batch.header.target == S7AreaDB) { batch.header.number = params.at(key::kNumber); }
   batch.header.offset = params.at(key::kOffset);
   batch.header.read_buffer_size = params.at(key::kAmount);
 

@@ -178,9 +178,7 @@ auto SwapBytes(SpanU8 bytes, const TagItem &item) -> Result<Bytes> {
   switch (item.type) {
     // Signle bit
   case kBool: {
-    if (static_cast<bool>((bytes[0] & (1 << item.bit)) != 0)) {
-      return Bytes(1, 1);
-    }
+    if (static_cast<bool>((bytes[0] & (1 << item.bit)) != 0)) { return Bytes(1, 1); }
     return Bytes(1, 0);
   }
     // 1 byte

@@ -22,9 +22,7 @@ auto Validator::Validate() -> Result<Json> {
   static constexpr std::array kSteps = {&Validator::ValidateScheme};
 
   for (const auto step : kSteps) {
-    if (auto res = (this->*step)(); !res) {
-      return std::move(res).error().Fail();
-    }
+    if (auto res = (this->*step)(); !res) { return std::move(res).error().Fail(); }
   }
   return config_;
 }
@@ -32,9 +30,7 @@ auto Validator::Validate() -> Result<Json> {
 auto Validator::ValidateScheme() -> Result<void> {
 
   auto res = CommonValidator{config_}.Validate();
-  if (!res) {
-    return res;
-  }
+  if (!res) { return res; }
 
   return {};
 }
@@ -47,9 +43,7 @@ auto CommonValidator::Validate() -> Result<void> {
   };
 
   for (const auto step : kSteps) {
-    if (auto res = (this->*step)(); !res) {
-      return res;
-    }
+    if (auto res = (this->*step)(); !res) { return res; }
   }
   return {};
 }
@@ -61,9 +55,7 @@ auto CommonValidator::ValidateAdapter() -> Result<void> {
   static constexpr std::array kReqKeys = {key::kId, key::kName, key::kEnabled};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
 
@@ -72,9 +64,7 @@ auto CommonValidator::ValidateAdapter() -> Result<void> {
     if (auto res = RequiredKey(loc_obj, key); !res) {
       return std::move(res).error().WithView("required by", kLocKey).Fail();
     }
-    if (auto res = CheckRule(loc_obj, key); !res) {
-      return res;
-    }
+    if (auto res = CheckRule(loc_obj, key); !res) { return res; }
   }
 
   return {};
@@ -87,9 +77,7 @@ auto CommonValidator::ValidateConnection() -> Result<void> {
   static constexpr std::array kReqKeys = {key::kIp, key::kRack, key::kSlot};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -99,9 +87,7 @@ auto CommonValidator::ValidateConnection() -> Result<void> {
     if (auto res = RequiredKey(loc_obj, key); !res) {
       return std::move(res).error().WithView("required by", kLocKey).Fail();
     }
-    if (auto res = CheckRule(loc_obj, key); !res) {
-      return res;
-    }
+    if (auto res = CheckRule(loc_obj, key); !res) { return res; }
   }
   return {};
 }
@@ -113,9 +99,7 @@ auto CommonValidator::ValidateReconnect() -> Result<void> {
   static constexpr std::array kReqKeys = {key::kInitialDelayMs, key::kMaxDelayMs, key::kFactor};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -125,9 +109,7 @@ auto CommonValidator::ValidateReconnect() -> Result<void> {
     if (auto res = RequiredKey(loc_obj, key); !res) {
       return std::move(res).error().WithView("required by", kLocKey).Fail();
     }
-    if (auto res = CheckRule(loc_obj, key); !res) {
-      return res;
-    }
+    if (auto res = CheckRule(loc_obj, key); !res) { return res; }
   }
   return {};
 }
@@ -139,9 +121,7 @@ auto CommonValidator::ValidatePolling() -> Result<void> {
   static constexpr std::array kReqKeys = {key::kIntervalMs};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -151,9 +131,7 @@ auto CommonValidator::ValidatePolling() -> Result<void> {
     if (auto res = RequiredKey(loc_obj, key); !res) {
       return std::move(res).error().WithView("required by", kLocKey).Fail();
     }
-    if (auto res = CheckRule(loc_obj, key); !res) {
-      return res;
-    }
+    if (auto res = CheckRule(loc_obj, key); !res) { return res; }
   }
   return {};
 }
@@ -164,9 +142,7 @@ auto CommonValidator::ValidateRead() -> Result<void> {
   constexpr std::string_view kLocKey = key::kRead; // Local key used
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -206,9 +182,7 @@ auto CommonValidator::ValidateReadItem(const Json &config) -> Result<void> {
   default:
     break;
   }
-  if (!res) {
-    return res;
-  }
+  if (!res) { return res; }
   return {};
 }
 
@@ -225,9 +199,7 @@ auto AreaValidator::Validate() -> Result<void> {
   };
 
   for (const auto step : kSteps) {
-    if (auto res = (this->*step)(); !res) {
-      return res;
-    }
+    if (auto res = (this->*step)(); !res) { return res; }
   }
   return {};
 }
@@ -238,9 +210,7 @@ auto AreaValidator::ValidateParams() -> Result<void> {
   static constexpr std::array kKeys = {key::kAreaTarget, key::kOffset, key::kAmount};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -250,9 +220,7 @@ auto AreaValidator::ValidateParams() -> Result<void> {
     if (auto res = RequiredKey(loc_obj, key); !res) {
       return std::move(res).error().WithView("required by", kLocKey).Fail();
     }
-    if (auto res = CheckRule(loc_obj, key); !res) {
-      return res;
-    }
+    if (auto res = CheckRule(loc_obj, key); !res) { return res; }
   }
   return {};
 }
@@ -264,9 +232,7 @@ auto AreaValidator::ValidateTags() -> Result<void> {
   static constexpr std::array kReqKeys = {key::kId, key::kName, key::kOffset, key::kDataType};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -297,9 +263,7 @@ auto MultiValidator::Validate() -> Result<void> {
   };
 
   for (const auto step : kSteps) {
-    if (auto res = (this->*step)(); !res) {
-      return res;
-    }
+    if (auto res = (this->*step)(); !res) { return res; }
   }
   return {};
 }
@@ -310,9 +274,7 @@ auto MultiValidator::ValidateTags() -> Result<void> {
   static constexpr std::array kReqKeys = {key::kId, key::kName, key::kTarget};
 
   // Check for own key first
-  if (auto res = RequiredKey(config_, kLocKey); !res) {
-    return res;
-  }
+  if (auto res = RequiredKey(config_, kLocKey); !res) { return res; }
 
   // Assign the local json object
   const Json &loc_obj = config_.at(kLocKey);
@@ -354,23 +316,15 @@ auto GetAdapterParams(const Json &config) -> Result<AdapterInfo> {
   constexpr std::array kReqKeys2 = {key::kId, key::kName};
 
   for (const auto key : kReqKeys1) {
-    if (auto res = s7::RequiredKey(config, key); !res) {
-      return std::move(res).error().Fail();
-    }
-    if (auto res = s7::CheckRule(config, key); !res) {
-      return std::move(res).error().Fail();
-    }
+    if (auto res = s7::RequiredKey(config, key); !res) { return std::move(res).error().Fail(); }
+    if (auto res = s7::CheckRule(config, key); !res) { return std::move(res).error().Fail(); }
   }
 
   const auto &adap_block = config.at(key::kAdapter);
 
   for (const auto key : kReqKeys2) {
-    if (auto res = s7::RequiredKey(adap_block, key); !res) {
-      return std::move(res).error().Fail();
-    }
-    if (auto res = s7::CheckRule(adap_block, key); !res) {
-      return std::move(res).error().Fail();
-    }
+    if (auto res = s7::RequiredKey(adap_block, key); !res) { return std::move(res).error().Fail(); }
+    if (auto res = s7::CheckRule(adap_block, key); !res) { return std::move(res).error().Fail(); }
   }
 
   return AdapterInfo{

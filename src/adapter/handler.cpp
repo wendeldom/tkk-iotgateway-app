@@ -56,9 +56,7 @@ auto Handler::Start() -> Result<void> {
   auto res = SearchConfigDirs();
   PublishStatus();
   worker_thread_ = std::jthread([this](const std::stop_token &st) { PollAdapterMetrics(st); });
-  if (!res) {
-    return res;
-  }
+  if (!res) { return res; }
   return {};
 }
 
@@ -74,17 +72,11 @@ auto Handler::SearchConfigDirs() -> Result<void> {
   }
 
   // s7 adapter path
-  if (auto res = SearchS7Path(); !res) {
-    err.Add(std::move(res).error());
-  }
+  if (auto res = SearchS7Path(); !res) { err.Add(std::move(res).error()); }
   // opc adapter path
-  if (auto res = SearchOpcPath(); !res) {
-    err.Add(std::move(res).error());
-  }
+  if (auto res = SearchOpcPath(); !res) { err.Add(std::move(res).error()); }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -114,9 +106,7 @@ auto Handler::SearchS7Path() -> Result<void> {
     }
   }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
@@ -146,23 +136,17 @@ auto Handler::SearchOpcPath() -> Result<void> {
     }
   }
 
-  if (err.HasSubErr()) {
-    return std::move(err).Fail();
-  }
+  if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
 }
 
 auto Handler::CreateS7Adapter(const std::filesystem::path &path) -> Result<AdapterItem> {
   // Open file
   auto res_open = OpenAndParse(path);
-  if (!res_open) {
-    return std::move(res_open).error().Fail();
-  }
+  if (!res_open) { return std::move(res_open).error().Fail(); }
   // Extract protocol,id,name
   auto res_params = s7::GetAdapterParams(*res_open);
-  if (!res_params) {
-    return std::move(res_params).error().Fail();
-  }
+  if (!res_params) { return std::move(res_params).error().Fail(); }
   // Check for duplicate adapter ids
   if (IsDuplicateId(res_params->id)) {
     return Error(ErrC::kConfigInvalid, ErrA::kFatal, "duplicate adapter id")
@@ -235,16 +219,12 @@ void Handler::PollAdapterMetrics(const std::stop_token &st) {
       // Check if adapter is setup for restart
       if (adapter_item.restart_set && (chr::steady_clock::now() >= adapter_item.restart_at)) {
         auto res = RestartAdapter(adapter_item);
-        if (!res) {
-          log::LogErrors(std::move(res).error().Dump(), kErrSource);
-        }
+        if (!res) { log::LogErrors(std::move(res).error().Dump(), kErrSource); }
         continue;
       }
 
       // From here on only allowed if the adapter ptr is valid
-      if (adapter_item.adapter == nullptr) {
-        continue;
-      }
+      if (adapter_item.adapter == nullptr) { continue; }
       const auto metric = adapter_item.adapter->GetAdapterMetric();
 
       // Check if adapter is in hardfault -> setup for restart
@@ -253,9 +233,7 @@ void Handler::PollAdapterMetrics(const std::stop_token &st) {
         continue;
       }
       // Check if adapter is started
-      if (!metric.started) {
-        adapter_item.adapter->Start();
-      }
+      if (!metric.started) { adapter_item.adapter->Start(); }
     }
 
     PublishStatus();
