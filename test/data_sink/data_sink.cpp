@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Dominik Wendel
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #include "helper/helper.hpp"
 #include "tkk/core/type.hpp"
 #include "tkk/data_sink/sink_engine.hpp"

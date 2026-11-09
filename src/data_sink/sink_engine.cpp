@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Dominik Wendel
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #include "tkk/data_sink/sink_engine.hpp"
 #include "tkk/core/error.hpp"
 #include "tkk/core/type.hpp"
@@ -78,7 +81,7 @@ auto SinkEngine::RunOnce() -> Result<void> {
   if (auto res = WriteTransaction(); !res) {
     // On error, reinsert the local queue back into the main queue
     queue_.insert(queue_.begin(), swap_queue_.begin(), swap_queue_.end());
-    return {Error(ErrC::kDataBaseError, ErrA::kFatal, "Failed to write transaction").Fail()};
+    return res;
   }
   swap_queue_.clear();
   return {};
