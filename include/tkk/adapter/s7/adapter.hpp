@@ -6,6 +6,7 @@
 #include "tkk/adapter/s7/client.hpp"
 #include "tkk/adapter/s7/state.hpp"
 #include "tkk/core/error.hpp"
+#include "tkk/data_sink/sink_engine.hpp"
 #include <condition_variable>
 #include <cstddef>
 #include <memory>
@@ -18,7 +19,7 @@ namespace tkk::s7 {
 class Adapter final : public IDataSourceAdapter, public IAdapter {
 
 public:
-  Adapter(Json &&config, size_t id, std::string name,
+  Adapter(Json &&config, size_t id, std::string name, sink::SinkEngine &sink,
           std::unique_ptr<ISnap7Client> client = nullptr, std::unique_ptr<State> state = nullptr);
   ~Adapter();
 
@@ -65,6 +66,9 @@ private:
   Json config_data_;
   ConfigItem config_item_;
   AdapterMetric metric_;
+
+  // sink engine
+  sink::SinkEngine &sink_;
 
   // Snap7
   bool reconn_active_{false};

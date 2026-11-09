@@ -70,6 +70,7 @@ void SinkEngine::InitStatements() {
 void SinkEngine::Push(std::vector<DataPoint> &&data_points) {
   std::unique_lock lock(queue_mtx_);
   queue_.push_back(std::move(data_points));
+  if (noti_cv_ != nullptr) { noti_cv_->notify_one(); }
 }
 
 auto SinkEngine::RunOnce() -> Result<void> {

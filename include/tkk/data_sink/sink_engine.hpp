@@ -6,6 +6,7 @@
 #include "tkk/core/type.hpp"
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
+#include <condition_variable>
 #include <deque>
 #include <filesystem>
 #include <mutex>
@@ -15,7 +16,7 @@
 
 namespace tkk::sink {
 
-class SinkEngine {
+class SinkEngine : private NoCopyNoMove {
 public:
   explicit SinkEngine(std::filesystem::path db_path) : db_path_(std::move(db_path)) {}
 
@@ -29,6 +30,8 @@ public:
   [[nodiscard]] auto GetQueueSize() -> std::size_t;
   [[nodiscard]] auto GetTableSize() -> Result<std::size_t>;
   void Push(std::vector<DataPoint> &&data_points);
+
+  void SetNotificationCv(std::condition_variable_any &noti_cv) { noti_cv_ = &noti_cv; }
 
 private:
   [[nodiscard]] auto WriteEntry(const DataPoint &data_point) -> Result<void>;
@@ -44,6 +47,7 @@ private:
   std::optional<SQLite::Database> db_;
   std::optional<SQLite::Statement> insert_stmt_;
   std::optional<SQLite::Statement> select_stmt_;
+  std::condition_variable_any *noti_cv_ = nullptr;
 };
 
 } // namespace tkk::sink

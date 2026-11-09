@@ -10,6 +10,7 @@
 #include "tkk/adapter/s7/type.hpp"
 #include "tkk/core/error.hpp"
 #include "tkk/core/type.hpp"
+#include "tkk/data_sink/sink_engine.hpp"
 #include <atomic>
 #include <catch2/catch_test_macros.hpp>
 #include <cstddef>
@@ -175,6 +176,7 @@ struct AdapterFixture {
   std::unique_ptr<FakeState> state;
   Fake7Client *client_ptr;
   FakeState *state_ptr;
+  tkk::sink::SinkEngine sink{TKK_TEST_DB_DIR};
 
   AdapterFixture()
       : client{std::make_unique<Fake7Client>()}, state{std::make_unique<FakeState>()},
@@ -184,11 +186,11 @@ struct AdapterFixture {
     cfg = LoadJson(TKK_TEST_DATA_DIR "/valid/s7/" + file + ".json");
   }
 
-  static auto MakeAdapter(tkk::Json &&config, size_t id, const std::string &name,
-                          std::unique_ptr<Fake7Client> client, std::unique_ptr<FakeState> state)
+  auto MakeAdapter(tkk::Json &&config, size_t id, const std::string &name,
+                   std::unique_ptr<Fake7Client> client, std::unique_ptr<FakeState> state)
       -> std::unique_ptr<tkk::s7::Adapter> {
 
-    return std::make_unique<tkk::s7::Adapter>(std::move(config), id, name, std::move(client),
+    return std::make_unique<tkk::s7::Adapter>(std::move(config), id, name, sink, std::move(client),
                                               std::move(state));
   }
 };

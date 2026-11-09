@@ -5,6 +5,7 @@
 #include "tkk/adapter/data_source_adapter.hpp"
 #include "tkk/core/error.hpp"
 #include "tkk/core/type.hpp"
+#include "tkk/data_sink/sink_engine.hpp"
 #include <chrono>
 #include <condition_variable>
 #include <cstddef>
@@ -36,8 +37,8 @@ struct HandlerStatus {
 
 class Handler final : private NoCopyNoMove {
 public:
-  explicit Handler(std::filesystem::path path = kDefConfigPath) noexcept
-      : config_path_(std::move(path)), s7_path_(config_path_ / "s7"),
+  explicit Handler(sink::SinkEngine &sink, std::filesystem::path path = kDefConfigPath) noexcept
+      : sink_(sink), config_path_(std::move(path)), s7_path_(config_path_ / "s7"),
         opc_path_(config_path_ / "opcua") {}
 
   ~Handler();
@@ -57,6 +58,9 @@ private:
   void PollAdapterMetrics(const std::stop_token &st);
   void PublishStatus();
   void DeleteId(size_t id);
+
+  // sink engine
+  sink::SinkEngine &sink_;
 
   // setup
   static constexpr std::string_view kDefConfigPath = "/etc/tkk-iotgateway";

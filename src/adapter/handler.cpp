@@ -158,7 +158,7 @@ auto Handler::CreateS7Adapter(const std::filesystem::path &path) -> Result<Adapt
   adp_item.info = *res_params;
   adp_item.path = path;
   adp_item.adapter =
-      std::make_unique<s7::Adapter>(std::move(*res_open), res_params->id, res_params->name);
+      std::make_unique<s7::Adapter>(std::move(*res_open), res_params->id, res_params->name, sink_);
 
   return adp_item;
 }

@@ -11,7 +11,7 @@
 
 namespace tkk::sink {
 
-class SinkWorker {
+class SinkWorker : private NoCopyNoMove {
 public:
   explicit SinkWorker(SinkEngine &engine) : engine_(engine) {}
 

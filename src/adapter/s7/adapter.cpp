@@ -9,6 +9,7 @@
 #include "tkk/adapter/s7/helper.hpp"
 #include "tkk/adapter/s7/state.hpp"
 #include "tkk/core/type.hpp"
+#include "tkk/data_sink/sink_engine.hpp"
 #include <format>
 #include <iostream>
 #include <memory>
@@ -17,9 +18,9 @@
 
 namespace tkk::s7 {
 
-Adapter::Adapter(Json &&config, size_t id, std::string name, std::unique_ptr<ISnap7Client> client,
-                 std::unique_ptr<State> state)
-    : id_{id}, name_{std::move(name)}, config_data_(std::move(config)) {
+Adapter::Adapter(Json &&config, size_t id, std::string name, sink::SinkEngine &sink,
+                 std::unique_ptr<ISnap7Client> client, std::unique_ptr<State> state)
+    : id_{id}, name_{std::move(name)}, config_data_(std::move(config)), sink_{sink} {
 
   // !=nullptr is for tests (fake client/state)
   client != nullptr ? client_ = std::move(client) : client_ = std::make_unique<Snap7Client>();
@@ -197,6 +198,9 @@ auto Adapter::Poll() -> Result<void> {
   }
 
   if (auto res = CreateDataPoints(); !res) { err.Add(std::move(res).error()); }
+  for (auto &batch : config_item_.batches) {
+    sink_.Push(std::move(batch.data_points));
+  }
 
   if (err.HasSubErr()) { return std::move(err).Fail(); }
   return {};
