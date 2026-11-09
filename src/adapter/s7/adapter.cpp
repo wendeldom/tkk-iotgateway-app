@@ -274,6 +274,8 @@ auto Adapter::CreateDataPoints() -> Result<void> {
   Error err{ErrC::kDefaultParent, ErrA::kSkip, ""};
 
   for (auto &batch : config_item_.batches) {
+    // Clear existing data points before creating new ones
+    batch.data_points.clear();
     switch (batch.header.mode) {
     case kArea:
       if (auto res = CreateAreaDp(batch); !res) { err.Add(std::move(res).error()); }
